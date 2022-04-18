@@ -55,7 +55,7 @@ let armenianJson = `[
         "name": "[ɛ]",
         "pronunciation": "[ɛ]",
         "transliteration": "ē",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["e"]
     },
     {
         "capital": "Ը",
@@ -63,7 +63,7 @@ let armenianJson = `[
         "name": "[ətʰ]",
         "pronunciation": "[ə]",
         "transliteration": "ə",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["e"]
     },
     {
         "capital": "Թ",
@@ -71,7 +71,7 @@ let armenianJson = `[
         "name": "[tʰo]",
         "pronunciation": "[tʰ]",
         "transliteration": "t‘",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["t"]
     },
     {
         "capital": "Ժ",
@@ -79,7 +79,7 @@ let armenianJson = `[
         "name": "[ʒɛ]",
         "pronunciation": "[ʒ]",
         "transliteration": "ž",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["z"]
     },
     {
         "capital": "Ի",
@@ -111,7 +111,7 @@ let armenianJson = `[
         "name": "[tsɑ]",
         "pronunciation": "[ts]",
         "transliteration": "c",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["ts"]
     },
     {
         "capital": "Կ",
@@ -135,7 +135,7 @@ let armenianJson = `[
         "name": "[dzɑ]",
         "pronunciation": "[dz]",
         "transliteration": "j",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["dz"]
     },
     {
         "capital": "Ղ",
@@ -143,7 +143,7 @@ let armenianJson = `[
         "name": "[ʁɑt]",
         "pronunciation": "[ʁ]",
         "transliteration": "ł",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["r"]
     },
     {
         "capital": "Ճ",
@@ -151,7 +151,7 @@ let armenianJson = `[
         "name": "[tʃɛ]",
         "pronunciation": "[tʃ]",
         "transliteration": "č",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["tch", "ch"]
     },
     {
         "capital": "Մ",
@@ -183,7 +183,7 @@ let armenianJson = `[
         "name": "[ʃɑ]",
         "pronunciation": "[ʃ]",
         "transliteration": "š",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["sh"]
     },
     {
         "capital": "Ո",
@@ -199,7 +199,7 @@ let armenianJson = `[
         "name": "[tʃʰɑ]",
         "pronunciation": "[tʃʰ]",
         "transliteration": "č‘",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["sh", "tsh"]
     },
     {
         "capital": "Պ",
@@ -215,7 +215,7 @@ let armenianJson = `[
         "name": "[ʤɛ]",
         "pronunciation": "[ʤ]",
         "transliteration": "ǰ",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["j"]
     },
     {
         "capital": "Ռ",
@@ -223,7 +223,7 @@ let armenianJson = `[
         "name": "[rɑ]",
         "pronunciation": "[r]",
         "transliteration": "r̄",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["r"]
     },
     {
         "capital": "Ս",
@@ -263,7 +263,7 @@ let armenianJson = `[
         "name": "[tsʰo]",
         "pronunciation": "[tsʰ]",
         "transliteration": "c‘",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["c"]
     },
     {
         "capital": "Ւ",
@@ -271,7 +271,7 @@ let armenianJson = `[
         "name": "[hʏn]",
         "pronunciation": "[v]",
         "transliteration": "w",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["v"]
     },
     {
         "capital": "Փ",
@@ -279,7 +279,7 @@ let armenianJson = `[
         "name": "[pʰʏɹ]",
         "pronunciation": "[pʰ]",
         "transliteration": "p‘",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["p"]
     },
     {
         "capital": "Ք",
@@ -287,7 +287,7 @@ let armenianJson = `[
         "name": "[kʰɛ]",
         "pronunciation": "[kʰ]",
         "transliteration": "k‘",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["k"]
     },
     {
         "capital": "Եվ",
@@ -303,7 +303,7 @@ let armenianJson = `[
         "name": "[o]",
         "pronunciation": "[o]",
         "transliteration": "ô",
-        "acceptableAnswers": [""]
+        "acceptableAnswers": ["o"]
     },
     {
         "capital": "Ֆ",
@@ -343,7 +343,9 @@ function init() {
 function newQuestion() {
     question = getLetter(dictionary);
     document.getElementById("question").innerHTML = question.getLetter();
-    document.getElementById("result").innerHTML = "";
+    let result = document.getElementById("result");
+    result.hidden = true;
+    result.classList=[];
     let answerTextbox = document.getElementById("answerTb");
     answerTextbox.value = "";
     answerTextbox.focus();
@@ -351,20 +353,28 @@ function newQuestion() {
 }
 
 function checkAnswer() {
-    document.getElementById("result").innerHTML =
-        question.isAnswerCorrent(document.getElementById("answerTb").value.trim().toLowerCase())
+    let result = document.getElementById("result");
+    let isCorrect = question.isAnswerCorrent(document.getElementById("answerTb").value.trim().toLowerCase());
+    result.innerHTML =
+        isCorrect
             ? "Correct!"
-            : `Wrong! ${question.getRightAnswer()}`;
+            : `${question.getRightAnswer()}`;
+    result.hidden = false;
+    result.classList.add( 
+        isCorrect
+            ? "greenBg"
+            : "redBg"
+    );
 }
 
 function getLetter(dict) {
     return {
         question: dict[Math.floor(Math.random() * dict.length)],
         getRightAnswer() {
-            return this.question.transliteration;
+            return `${this.question.transliteration} ${this.question.pronunciation}`;
         },
         getLetter() {
-            return this.question.capital;
+            return this.question.capital + ' ' + this.question.small;
         },
         isAnswerCorrent(answer) {
             return this.question.acceptableAnswers.concat(this.question.transliteration).includes(answer);
